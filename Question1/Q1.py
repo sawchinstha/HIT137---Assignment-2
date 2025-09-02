@@ -15,8 +15,17 @@ def encrypt(text, shift1, shift2):
         else:
             result += ch
     return result
-shift1 = int(input("Enter shift1: "))
-shift2 = int(input("Enter shift2: "))
+#Main function to run the program
+def main(): 
+    shift1 = int(input("Enter shift1: "))
+    shift2 = int(input("Enter shift2: "))
 
-with open("raw_text.txt","r") as f:
+    with open("raw_text.txt","r") as f:
         raw_text = f.read()
+# Encrypt and save text
+    encrypted_text = encrypt(raw_text, shift1, shift2)
+    with open("encrypted_text.txt", "w") as f:
+        f.write(encrypted_text)
+#Run the program
+if __name__ == "__main__":
+    main()
