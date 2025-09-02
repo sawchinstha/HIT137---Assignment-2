@@ -39,7 +39,7 @@ def main():
 #Open and Read raw_text file
     with open("raw_text.txt","r") as f:
         raw_text = f.read()
-# Encrypt and save text
+#Encrypt and save text
     encrypted_text = encrypt(raw_text, shift1, shift2)
     with open("encrypted_text.txt", "w") as f:
         f.write(encrypted_text)
