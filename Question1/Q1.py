@@ -43,6 +43,13 @@ def main():
     encrypted_text = encrypt(raw_text, shift1, shift2)
     with open("encrypted_text.txt", "w") as f:
         f.write(encrypted_text)
+#Read the Encrypted Text
+    with open("encrypted_text.txt","r") as f:
+        encrypted_message = f.read()
+#Decrypt and save text
+    decrypted_text = decrypt(encrypted_message, shift1, shift2)
+    with open("decrypted_text.txt", "w") as f:
+        f.write(decrypted_text)
 #Run the program
 if __name__ == "__main__":
     main()
