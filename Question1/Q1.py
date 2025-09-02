@@ -50,6 +50,11 @@ def main():
     decrypted_text = decrypt(encrypted_message, shift1, shift2)
     with open("decrypted_text.txt", "w") as f:
         f.write(decrypted_text)
+#Compare raw and decrypted tex
+    if raw_text == decrypted_text:
+        print("Decryption Successfull")
+    else:
+        print("Decryption Failed")   
 #Run the program
 if __name__ == "__main__":
     main()
