@@ -24,6 +24,10 @@ def main():
     t.speed(0)
     t.penup()
     
+    t.goto(-200, 60) 
+    t.pendown()
+
+    
     try:
         num_sides = int(screen.textinput("Input", "Enter the number of sides you want: "))
         side_length = int(screen.textinput("Input", "Enter the side length: "))
