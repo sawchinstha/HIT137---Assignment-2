@@ -37,6 +37,10 @@ def main():
         print("Invalid input. Please enter a valid number.")
         turtle.done()
         return
-
+    
+    for _ in range(num_sides):
+        draw_pattern(t, side_length, depth)
+        t.left(360 / num_sides)
+        
 if __name__ == "__main__":
     main()
