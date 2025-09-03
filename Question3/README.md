@@ -22,3 +22,5 @@ Side length: The length of each edge of the initial polygon in pixels
 Recursion depth: How many times to apply the pattern rules
 
 -------------------------------------------------------------------------------------------------------------------------
+question3.py file inside the Question3 folder contains the code satisfying all the requirement provided by the professor.
+THANK YOU
