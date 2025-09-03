@@ -1,4 +1,4 @@
-import turtle
+import turtle # import the turtle library containing all the function that we'll use 
 
 def draw_pattern(t, side_length, depth):
     
@@ -14,17 +14,18 @@ def draw_pattern(t, side_length, depth):
         t.right(60)
         draw_pattern(t, side_length / 3, depth - 1)
 
-def main():
-    screen = turtle.Screen()
-    screen.title("Recursive Geometric Pattern Generator")
-    screen.bgcolor("blue")
-    screen.setup(width=800, height=800)
+def main(): # wrap main program logic in this main() func
+    
+    screen = turtle.Screen() # create CANVAS for our drawing
+    screen.title("Recursive Geometric Pattern Generator") # giving title for the screen
+    screen.bgcolor("blue") # putting BLUE as a background color
+    screen.setup(width=800, height=800) # setting up width and height
     
     t = turtle.Turtle()
     t.speed(0)
     t.penup()
     
-    t.goto(-200, 60) 
+    t.goto(-200, 10) 
     t.pendown()
 
     
