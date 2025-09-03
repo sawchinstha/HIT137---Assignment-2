@@ -42,5 +42,7 @@ def main():
         draw_pattern(t, side_length, depth)
         t.left(360 / num_sides)
         
+    turtle.done()
+        
 if __name__ == "__main__":
     main()
