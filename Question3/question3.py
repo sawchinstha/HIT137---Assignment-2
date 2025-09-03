@@ -1,5 +1,7 @@
 import turtle
 
+def draw_pattern(t, side_length, depth):
+    # the drawing logic will go here
 def main():
     screen = turtle.Screen()
     screen.title("Recursive Geometric Pattern Generator")
