@@ -15,7 +15,7 @@ Outputs:
 import csv, glob, os, statistics
 
 # Directory and output file constants
-TEMPS_DIR = "temperatures"
+TEMPS_DIR = os.path.join(os.path.dirname(__file__), "temperatures")
 AVG_OUT   = "average_temp.txt"
 RANGE_OUT = "largest_temp_range_station.txt"
 STAB_OUT  = "temperature_stability_stations.txt"
@@ -127,7 +127,27 @@ def process_all():
                 f.write(f"{st}: Range {rg:.1f}°C (Max: {mx:.1f}°C, Min: {mn:.1f}°C)\n")
         print(f"[OK] Wrote {RANGE_OUT}")
 
-   
+       # 3) Temperature stability (std dev)
+    stabilities = {}
+    for st, vals in per_station.items():
+        if len(vals) >= 2:
+            stabilities[st] = statistics.pstdev(vals)
+
+    if not stabilities:
+        open(STAB_OUT, "w").write("No station data with sufficient variability\n")
+        print(f"[WARN] No station data with sufficient variability.")
+    else:
+        min_std = min(stabilities.values())
+        max_std = max(stabilities.values())
+        most_stable = [st for st,sd in stabilities.items() if abs(sd-min_std)<EPS]
+        most_variable = [st for st,sd in stabilities.items() if abs(sd-max_std)<EPS]
+
+        with open(STAB_OUT, "w") as f:
+            for st in sorted(most_stable):
+                f.write(f"Most Stable: {st}: StdDev {min_std:.1f}°C\n")
+            for st in sorted(most_variable):
+                f.write(f"Most Variable: {st}: StdDev {max_std:.1f}°C\n")
+        print(f"[OK] Wrote {STAB_OUT}")
 
 if __name__ == "__main__":
     process_all()
