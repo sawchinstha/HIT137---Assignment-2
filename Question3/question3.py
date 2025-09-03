@@ -4,6 +4,15 @@ def draw_pattern(t, side_length, depth):
     
     if depth == 0:
        t.forward(side_length)
+       
+    else:
+        draw_pattern(t, side_length / 3, depth - 1)
+        t.right(60)
+        draw_pattern(t, side_length / 3, depth - 1)
+        t.left(120)
+        draw_pattern(t, side_length / 3, depth - 1)
+        t.right(60)
+        draw_pattern(t, side_length / 3, depth - 1)
 
 def main():
     screen = turtle.Screen()
