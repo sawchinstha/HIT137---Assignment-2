@@ -9,6 +9,16 @@ def main():
     t = turtle.Turtle()
     t.speed(0)
     t.penup()
+    
+    try:
+        num_sides = int(screen.textinput("Input", "Enter the number of sides you want: "))
+        side_length = int(screen.textinput("Input", "Enter the side length: "))
+        depth = int(screen.textinput("Input", "Enter the recursion depth: "))
+    except (ValueError, TypeError):
+        
+        print("Invalid input. Please enter a valid number.")
+        turtle.done()
+        return
 
 if __name__ == "__main__":
     main()
