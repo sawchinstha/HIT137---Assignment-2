@@ -12,19 +12,19 @@ def draw_pattern(t, side_length, depth): # creating draw_pattern function which 
         # 1. draw the first third of the line
         draw_pattern(t, side_length / 3, depth - 1)
         
-        # 2. turn right by 60 degrees for the inward indentation
+        # 2. turn left by 60 degrees for the inward indentation
         t.left(60)
         
         # 3. draw the second third of the line
         draw_pattern(t, side_length / 3, depth - 1)
         
-        # 4. turn left by 120 degrees to complete the indentation
+        # 4. turn right by 120 degrees to complete the indentation
         t.right(120)
         
         # 5. draw the third third of the line
         draw_pattern(t, side_length / 3, depth - 1)
         
-        # 6. turn right by 60 degrees to get back to the original angle
+        # 6. turn left by 60 degrees to get back to the original angle
         t.left(60)
         
          # 7. draw the final segment
