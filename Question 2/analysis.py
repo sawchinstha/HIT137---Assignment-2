@@ -41,34 +41,34 @@ def parse_float(x):
     except: pass
     return None
 
-def detect_columns(header):
+def detect_columns(header): # iterates through each string in the header list
     """Detect station and month columns from CSV header."""
-    norm = [h.lower().replace(" ", "") for h in header]
+    norm = [h.lower().replace(" ", "") for h in header] #converts the current header string (h) to lowercase and removes any spaces from the lowercase string
 
     # station column detection
-    station_idx = 0
-    for i, h in enumerate(norm):
-        if "station" in h or "name" in h:
-            station_idx = i
+    station_idx = 0 # initializes a variable station_idx to 0
+    for i, h in enumerate(norm): #  loop iterates through the norm list
+        if "station" in h or "name" in h: # checks if the substring "station" is present in the header string also if the substring "name" is present
+            station_idx = i # If a match is found, the current index i is assigned to station_idx
             break
 
     # month detection
-    month_cols = {}
-    for i, h in enumerate(norm):
-        for m, name in MONTHS.items():
-            if name.lower() in h:
-                month_cols[m] = i
-    return station_idx, month_cols
+    month_cols = {} #  empty dictionary month_cols is initialized
+    for i, h in enumerate(norm): # iterates through the list of normalized header strings
+        for m, name in MONTHS.items(): # iterates through the MONTHS dictionary 
+            if name.lower() in h: # checks if the lowercase version of the full month name is a substring of the current normalized header 
+                month_cols[m] = i # If a match is found, the month number m is added to the month_cols dictionary as a key, and its corresponding column index i is assigned as the value
+    return station_idx, month_cols # function returns two values which contains a mapping of months to their column indices
 
 def process_all():
     """Main processing function to analyze all CSV files."""
-    if not os.path.isdir(TEMPS_DIR):
+    if not os.path.isdir(TEMPS_DIR): # checks if the path provided by variable is a valid directory
         print(f"[ERROR] Directory '{TEMPS_DIR}' not found.")
-        for fp in (AVG_OUT, RANGE_OUT, STAB_OUT):
+        for fp in (AVG_OUT, RANGE_OUT, STAB_OUT): #  creates three output files (AVG_OUT, RANGE_OUT, STAB_OUT) and writes "No data" into each of them
             open(fp, "w").write("No data\n")
         return
-    csvs = glob.glob(os.path.join(TEMPS_DIR, "*.csv"))
-    if not csvs:
+    csvs = glob.glob(os.path.join(TEMPS_DIR, "*.csv")) # creates a valid file path string that combines the directory name with the search pattern (.csv)
+    if not csvs: #  checks if the csvs list is empty
         print(f"[ERROR] No CSV files found in '{TEMPS_DIR}'.")
         for fp in (AVG_OUT, RANGE_OUT, STAB_OUT):
             open(fp, "w").write("No data\n")
@@ -79,52 +79,52 @@ def process_all():
     per_station = {}
 
     # Process each CSV file
-    for path in csvs:
-        print(f"[INFO] Processing {os.path.basename(path)}")
-        with open(path, "r", encoding="utf-8-sig") as f:
-            reader = csv.reader(f)
+    for path in csvs: # loop starts the file processing for each CSV file found
+        print(f"[INFO] Processing {os.path.basename(path)}") 
+        with open(path, "r", encoding="utf-8-sig") as f: # opens the CSV file for reading.
+            reader = csv.reader(f) # creates a csv.reader object which makes it easy to iterate over rows in the CSV file
             try: header = next(reader)
             except Exception:
                 print(f"[WARN] Skipping empty or malformed file: {path}")
                 continue
-            st_col, month_cols = detect_columns(header)
-            if not month_cols:
+            st_col, month_cols = detect_columns(header) # calls a function to get the index of the station column (st_col) and a dictionary of month columns
+            if not month_cols: # finds no month columns, it prints a warning and skips the file
                 print(f"[WARN] No month columns found in {path}")
                 continue
             for row in reader:
                 if not row or st_col >= len(row): continue
-                station = row[st_col].strip()
-                if not station: continue
-                per_station.setdefault(station, [])
-                for m, col in month_cols.items():
-                    if col < len(row):
-                        v = parse_float(row[col])
-                        if v is not None:
-                            per_station[station].append(v)
+                station = row[st_col].strip() #  extracts the station name from the station column and removes any leading/trailing whitespace
+                if not station: continue # Skips the row if the station name is empty
+                per_station.setdefault(station, []) # It checks if station is a key in the per_station dictionary and if it's not, it creates the key and sets its value to an empty list
+                for m, col in month_cols.items(): # iterates through the months that were found in the header
+                    if col < len(row): # checks if the current row has a column for the month being processed
+                        v = parse_float(row[col]) # likely handles non-numeric values by returning None
+                        if v is not None: # checks if the value was successfully converted to a number
+                            per_station[station].append(v) # If the value is valid, it's added to the list of temperatures for the current station
                             seasons[MONTH_TO_SEASON[m]].append(v)
 
     # 1) Seasonal averages
-    with open(AVG_OUT, "w") as f:
-        for s in ["Summer","Autumn","Winter","Spring"]:
-            vals = seasons[s]
-            if vals:
-                f.write(f"{s}: {sum(vals)/len(vals):.1f}°C\n")
+    with open(AVG_OUT, "w") as f: # If the file already exists, its contents will be completely erased & if it doesn't exist, a new, empty file will be created
+        for s in ["Summer","Autumn","Winter","Spring"]: # iterates through a fixed list of season names in a specific order
+            vals = seasons[s] # it retrieves the list of all collected temperature values from the seasons dictionary and assigns it to the vals variable for each season
+            if vals: # checks if the vals list is not empty
+                f.write(f"{s}: {sum(vals)/len(vals):.1f}°C\n") # runs if data exists for the season
             else:
                 f.write(f"{s}: No data\n")
     print(f"[OK] Wrote {AVG_OUT}")
 
     # 2) Temperature range - find stations with largest range
-    ranges = {st: (max(v)-min(v), max(v), min(v)) for st,v in per_station.items() if len(v)>=2}
-    if not ranges:
+    ranges = {st: (max(v)-min(v), max(v), min(v)) for st,v in per_station.items() if len(v)>=2} # calculate the temperature range for every station
+    if not ranges: # checks if the ranges dictionary is empty
         open(RANGE_OUT, "w").write("No station data with sufficient range\n")
         print(f"[WARN] No station data with sufficient range.")
     else:
-        max_range = max(r[0] for r in ranges.values())
-        winners = [st for st,(rg,_,_) in ranges.items() if abs(rg-max_range)<EPS]
-        with open(RANGE_OUT, "w") as f:
-            for st in sorted(winners):
-                rg, mx, mn = ranges[st]
-                f.write(f"{st}: Range {rg:.1f}°C (Max: {mx:.1f}°C, Min: {mn:.1f}°C)\n")
+        max_range = max(r[0] for r in ranges.values()) # finds the single largest range value from the ranges dictionary
+        winners = [st for st,(rg,_,_) in ranges.items() if abs(rg-max_range)<EPS] # identifies all stations whose calculated range is approximately equal to max_range
+        with open(RANGE_OUT, "w") as f: # output file (RANGE_OUT) is opened in write mode
+            for st in sorted(winners): # code iterates through the winners list, which is sorted alphabetically to ensure consistent output
+                rg, mx, mn = ranges[st] # unpacks the tuple of range, max, and min values for the current winning station.
+                f.write(f"{st}: Range {rg:.1f}°C (Max: {mx:.1f}°C, Min: {mn:.1f}°C)\n") # ormatted string is written to the file
         print(f"[OK] Wrote {RANGE_OUT}")
 
    # 3) Temperature stability (std dev)
