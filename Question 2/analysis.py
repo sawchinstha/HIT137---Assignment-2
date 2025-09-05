@@ -128,42 +128,42 @@ def process_all():
         print(f"[OK] Wrote {RANGE_OUT}")
 
    # 3) Temperature stability (std dev)
-    stabilities = {}
-    for st, vals in per_station.items():
-        if len(vals) >= 2:
-            stabilities[st] = statistics.pstdev(vals)
+    stabilities = {} # empty dictionary is initialized to store the standard deviation for each station
+    for st, vals in per_station.items(): # loops through the per_station dictionary, which contains lists of temperature values (vals) for each station (st)
+        if len(vals) >= 2: # this check ensures that a calculation is possible
+            stabilities[st] = statistics.pstdev(vals) # calculates the population standard deviation of the temperature values using Python's statistics.pstdev() function and stores the result in the stabilities dictionary
 
-    if not stabilities:
+    if not stabilities: # checks if the stabilities dictionary is empty.
         open(STAB_OUT, "w").write("No station data with sufficient variability\n")
         print(f"[WARN] No station data with sufficient variability.")
     else:
-        min_std = min(stabilities.values())
-        max_std = max(stabilities.values())
-        most_stable = [st for st,sd in stabilities.items() if abs(sd-min_std)<EPS]
-        most_variable = [st for st,sd in stabilities.items() if abs(sd-max_std)<EPS]
+        min_std = min(stabilities.values()) # Finds the lowest standard deviation value, representing the most stable temperature
+        max_std = max(stabilities.values()) # Finds the highest standard deviation value, representing the most variable temperature
+        most_stable = [st for st,sd in stabilities.items() if abs(sd-min_std)<EPS] # finds all stations whose standard deviation is equal to the minimum
+        most_variable = [st for st,sd in stabilities.items() if abs(sd-max_std)<EPS] # finds all stations with the maximum standard deviation
 
-        with open(STAB_OUT, "w") as f:
-            for st in sorted(most_stable):
+        with open(STAB_OUT, "w") as f: # it will either create a new file or overwrite any existing one
+            for st in sorted(most_stable): # iterates through the most_stable list, which contains the names of the stations with the lowest temperature standard deviation
                 f.write(f"Most Stable: {st}: StdDev {min_std:.1f}°C\n")
-            for st in sorted(most_variable):
+            for st in sorted(most_variable): # for the stations with the highest temperature variability
                 f.write(f"Most Variable: {st}: StdDev {max_std:.1f}°C\n")
         print(f"[OK] Wrote {STAB_OUT}")
     if not stabilities:
         open(STAB_OUT, "w").write("No station data with sufficient variability\n")
         print(f"[WARN] No station data with sufficient variability.")
     else:
-        min_std = min(stabilities.values())
-        max_std = max(stabilities.values())
-        most_stable = [st for st,sd in stabilities.items() if abs(sd-min_std)<EPS]
-        most_variable = [st for st,sd in stabilities.items() if abs(sd-max_std)<EPS]
+        min_std = min(stabilities.values()) # finds the smallest standard deviation value, representing the most stable temperature
+        max_std = max(stabilities.values()) # finds the largest standard deviation value, representing the most variable temperature
+        most_stable = [st for st,sd in stabilities.items() if abs(sd-min_std)<EPS] # creates a list of all stations that have a standard deviation approximately equal to the minimum.
+        most_variable = [st for st,sd in stabilities.items() if abs(sd-max_std)<EPS] # creates a list of all stations that have a standard deviation approximately equal to the maximum
 
-        with open(STAB_OUT, "w") as f:
+        with open(STAB_OUT, "w") as f: # opens the designated file for writing, overwriting any previous content
             for st in sorted(most_stable):
                 f.write(f"Most Stable: {st}: StdDev {min_std:.1f}°C\n")
             for st in sorted(most_variable):
                 f.write(f"Most Variable: {st}: StdDev {max_std:.1f}°C\n")
         print(f"[OK] Wrote {STAB_OUT}")
-if __name__ == "__main__":
+if __name__ == "__main__": # ensures that  process_all() function is only called when the script is run directly
     process_all()
 
 
