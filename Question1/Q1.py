@@ -10,7 +10,7 @@ def encrypt(text, shift1, shift2):
                 result += chr((ord(ch) - start + (shift1 * shift2)) % 26 + start)
             elif 'n' <= text <= 'z':  # For lowercase 'n' to 'z'
                 result += chr((ord(ch) - start - (shift1 + shift2)) % 26 + start)
-            elif 'a' <= ch <= 'm':  # For lowercase 'a' to 'm'
+            elif 'A' <= ch <= 'M':  # For lowercase 'a' to 'm'
                 result += chr((ord(ch) - start - shift1) % 26 + start)
             elif 'N' <= text <= 'Z':  # For Uppercase 'N' to 'Z'
                 result += chr((ord(ch) - start + (shift2**2)) % 26 + start)
@@ -23,34 +23,24 @@ def decrypt(text, shift1, shift2):
     for ch in text:
         if ch.isalpha(): # Only decrypt alphabetic characters
             start = ord("a") if ch.islower() else ord("A")  # Determine ASCII start
-
             # Reverse the encryption logic based on character range
             if 'a' <= ch <= 'm':
                 result += chr((ord(ch) - start - (shift1 * shift2)) % 26 + start)
             elif 'n' <= text <= 'z':
                 result += chr((ord(ch) - start + (shift1 + shift2)) % 26 + start)
-            elif 'a' <= ch <= 'm':
+            elif 'A' <= ch <= 'M':
                 result += chr((ord(ch) - start + shift1) % 26 + start)
             elif 'N' <= text <= 'Z':
                 result += chr((ord(ch) - start - (shift2**2)) % 26 + start)
         else:
             result += ch  # Non-alphabetic characters are left unchanged
     return result
-# Function to safely get shift value from user with validation
-def get_shift(prompt):
-    """Prompt user until a valid integer shift is entered."""
-    while True:
-        try:
-            value = int(input(prompt))  # Take input from user
-            return value  # Return valid integer
-        except ValueError:
-            print("Invalid input! Please enter an integer.")  # Show error and retry
 
 # Main function to run the encryption/decryption process
 def main():
     # Take shift values from user with validation
-    shift1 = get_shift("Enter the shift 1 (integer): ")
-    shift2 = get_shift("Enter the shift 2 (integer): ")
+    shift1 = int(input("Enter  shift 1 (integer): "))
+    shift2 = int(input("Enter shift 2 (integer): "))
 
     # Open and Read raw_text file
     try:
@@ -76,11 +66,12 @@ def main():
 
     # Compare raw and decrypted text
     if raw_text == decrypted_text:
-        print("Decryption Successful ✅")  # Successful decryption
+        print("Decryption Successful")  # Successful decryption
     else:
-        print("Decryption Failed ❌")  # Decryption mismatch
+        print("Decryption Failed")  # Decryption mismatch
 
 # Run the program
 if __name__ == "__main__":
     main()  # Call main function
+
 
