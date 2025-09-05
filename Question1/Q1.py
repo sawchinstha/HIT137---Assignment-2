@@ -38,7 +38,7 @@ def decrypt(text, shift1, shift2):
 
 # Main function to run the encryption/decryption process
 def main():
-    # Take shift values from user with validation
+    # Take shift values (only integers)
     shift1 = int(input("Enter  shift 1 (integer): "))
     shift2 = int(input("Enter shift 2 (integer): "))
 
@@ -55,7 +55,7 @@ def main():
     with open("encrypted_text.txt", "w") as f:
         f.write(encrypted_text)  # Save encrypted text
 
-    # Read the Encrypted Text
+    # Read Encrypted Text
     with open("encrypted_text.txt", "r") as f:
         encrypted_message = f.read()  # Read back encrypted text
 
